@@ -182,6 +182,3 @@ INSERT INTO reviews (user_id, product_id, rating, review_text) VALUES
 (5, 5, 4, 'Works well in the kitchen'),
 (6, 6, 5, 'Excellent noise cancellation!'),
 (7, 7, 5, 'Very warm and comfortable.');
-
-
-
