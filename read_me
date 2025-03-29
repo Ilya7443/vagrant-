@@ -1,0 +1,42 @@
+# Включить машину
+vagrant up 
+
+# Подключиться к машине
+vagrant ssh 
+
+# mysql install 
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install mysql-server -y 
+
+# mysql connect 
+sudo mysql 
+
+# how to create  database 
+CREATE DATABASE PracticeDB;
+USE PracticeDB;
+# how to create table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    amount DECIMAL(10,2) NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+# how to insert data 
+INSERT INTO users (name, email) VALUES 
+('Alice Johnson', 'alice@example.com'),
+('Bob Smith', 'bob@example.com'),
+('Charlie Brown', 'charlie@example.com');
+
+INSERT INTO orders (user_id, amount) VALUES 
+(1, 50.25), -- Order by Alice
+(2, 120.00), -- Order by Bob
+(3, 75.50), -- Order by Charlie
+(1, 30.00), -- Another order by Alice
+(2, 200.75); -- Another order by Bob
