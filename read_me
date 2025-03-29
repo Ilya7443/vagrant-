@@ -184,3 +184,4 @@ INSERT INTO reviews (user_id, product_id, rating, review_text) VALUES
 (7, 7, 5, 'Very warm and comfortable.');
 
 
+
