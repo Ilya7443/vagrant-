@@ -22,3 +22,4 @@ Vagrant.configure("2") do |config|
       end # End node1 node definer
 
 end #End vagrant configure 
+
