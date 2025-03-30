@@ -1,0 +1,184 @@
+# Включить машину
+vagrant up 
+
+# Подключиться к машине
+vagrant ssh 
+
+# mysql install 
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install mysql-server -y 
+
+# mysql connect 
+sudo mysql 
+
+# how to create  database 
+CREATE DATABASE PracticeDB;
+USE PracticeDB;
+# how to create table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    amount DECIMAL(10,2) NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+# how to insert data 
+INSERT INTO users (name, email) VALUES 
+('Alice Johnson', 'alice@example.com'),
+('Bob Smith', 'bob@example.com'),
+('Charlie Brown', 'charlie@example.com');
+
+INSERT INTO orders (user_id, amount) VALUES 
+(1, 50.25), -- Order by Alice
+(2, 120.00), -- Order by Bob
+(3, 75.50), -- Order by Charlie
+(1, 30.00), -- Another order by Alice
+(2, 200.75); -- Another order by Bob
+
+
+#Это другая база данных 
+
+-- 1. Создаем базу данных
+CREATE DATABASE EcommerceDB;
+USE EcommerceDB;
+
+-- 2. Таблица пользователей
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO users (name, email, password) VALUES
+('Alice Johnson', 'alice@example.com', 'alicepass123'),
+('Bob Smith', 'bob@example.com', 'bobsecure456'),
+('Charlie Brown', 'charlie@example.com', 'charliepass789'),
+('David Wilson', 'david@example.com', 'davidpass234'),
+('Eve Adams', 'eve@example.com', 'evepass567'),
+('Frank Harris', 'frank@example.com', 'frankpass890'),
+('Grace Kelly', 'grace@example.com', 'gracepass111'),
+('Henry Ford', 'henry@example.com', 'henrypass222'),
+('Isabella Stone', 'isabella@example.com', 'isabellapass333'),
+('Jack White', 'jack@example.com', 'jackpass444'),
+('Liam Carter', 'liam@example.com', 'liampass555'),
+('Mia Davis', 'mia@example.com', 'miapass666');
+
+-- 3. Таблица категорий товаров
+CREATE TABLE categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL
+);
+
+INSERT INTO categories (name) VALUES
+('Electronics'),
+('Clothing'),
+('Books'),
+('Home Appliances'),
+('Toys');
+
+-- 4. Таблица товаров
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL,
+    category_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+);
+
+INSERT INTO products (name, description, price, stock, category_id) VALUES
+('Smartphone', 'Latest model with high-end specs', 699.99, 50, 1),
+('Laptop', 'Powerful gaming laptop', 1299.99, 30, 1),
+('T-shirt', 'Cotton t-shirt with cool print', 19.99, 100, 2),
+('Novel - Mystery', 'A thrilling mystery novel', 12.99, 40, 3),
+('Blender', 'High-speed kitchen blender', 49.99, 25, 4),
+('Headphones', 'Noise-cancelling headphones', 149.99, 60, 1),
+('Jacket', 'Warm winter jacket', 89.99, 45, 2);
+
+-- 5. Таблица заказов
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    total_amount DECIMAL(10,2) NOT NULL,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('pending', 'shipped', 'delivered', 'cancelled') DEFAULT 'pending',
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+INSERT INTO orders (user_id, total_amount, status) VALUES
+(1, 719.98, 'pending'),
+(2, 1299.99, 'shipped'),
+(3, 19.99, 'delivered'),
+(4, 12.99, 'pending'),
+(5, 49.99, 'cancelled'),
+(6, 149.99, 'shipped'),
+(7, 89.99, 'delivered');
+
+-- 6. Таблица товаров в заказах
+CREATE TABLE order_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+INSERT INTO order_items (order_id, product_id, quantity, price) VALUES
+(1, 1, 1, 699.99),
+(1, 3, 1, 19.99),
+(2, 2, 1, 1299.99),
+(3, 3, 1, 19.99),
+(4, 4, 1, 12.99),
+(6, 6, 1, 149.99),
+(7, 7, 1, 89.99);
+
+-- 7. Таблица платежей
+CREATE TABLE payments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    payment_method ENUM('credit_card', 'paypal', 'bank_transfer') NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
+
+INSERT INTO payments (order_id, payment_method, amount) VALUES
+(1, 'credit_card', 719.98),
+(2, 'paypal', 1299.99),
+(3, 'bank_transfer', 19.99),
+(4, 'credit_card', 12.99),
+(6, 'paypal', 149.99),
+(7, 'bank_transfer', 89.99);
+
+-- 8. Таблица отзывов о товарах
+CREATE TABLE reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    product_id INT,
+    rating INT CHECK (rating BETWEEN 1 AND 5),
+    review_text TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+INSERT INTO reviews (user_id, product_id, rating, review_text) VALUES
+(1, 1, 5, 'Amazing smartphone!'),
+(2, 2, 4, 'Great laptop but a bit expensive'),
+(3, 3, 5, 'Nice quality t-shirt'),
+(4, 4, 3, 'Good read, but not my favorite'),
+(5, 5, 4, 'Works well in the kitchen'),
+(6, 6, 5, 'Excellent noise cancellation!'),
+(7, 7, 5, 'Very warm and comfortable.');
