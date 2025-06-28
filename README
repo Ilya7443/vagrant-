@@ -182,3 +182,26 @@ INSERT INTO reviews (user_id, product_id, rating, review_text) VALUES
 (5, 5, 4, 'Works well in the kitchen'),
 (6, 6, 5, 'Excellent noise cancellation!'),
 (7, 7, 5, 'Very warm and comfortable.');
+ 
+
+ Vagrantfile были изменены, следующий конфигурации: ip, был добавлен код 
+
+ pa.vm.provision "shell", inline: <<-SHELL
+  # Создаёт директорию .ssh в домашней папке пользователя vagrant (если её ещё нет)
+  mkdir -p /home/vagrant/.ssh
+
+  # Добавляет содержимое всех публичных ключей из /vagrant/*.pub в файл authorized_keys
+  # Это нужно для авторизации по SSH с использованием этих ключей
+  cat /vagrant/*.pub >> /home/vagrant/.ssh/authorized_keys
+
+  # Устанавливает владельца директории .ssh и всех вложенных файлов — пользователь и группа vagrant
+  chown -R vagrant:vagrant /home/vagrant/.ssh
+
+  # Устанавливает права доступа: на саму директорию — только владелец может читать, писать и заходить
+  chmod 700 /home/vagrant/.ssh
+
+  # Устанавливает права доступа на authorized_keys — только владелец может читать и писать
+  chmod 600 /home/vagrant/.ssh/authorized_keys
+
+  # Устанавливает Docker (если он ещё не установлен) через APT
+  sudo apt install docker -y
