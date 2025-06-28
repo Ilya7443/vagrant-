@@ -11,8 +11,8 @@ Vagrant.configure("2") do |config|
     config.vm.define "node1" do |pa|
         pa.vm.box = "ubuntu/jammy64" # Set the Ubuntu 22 box  [pa.vm.box = "centos/stream9" # Set the CentOS 9 box] ubuntu/focal64 for ubuntu 20.04
         pa.vm.box_check_update = false # Disable box version checks for faster provisioning
-        pa.vm.hostname = "node1" # Set hostname for the VM
-        pa.vm.network "private_network", ip: "192.168.56.110" # Assign a private network IP
+        pa.vm.hostname = "node1" # Set hostname for the VM        
+        pa.vm.network "public_network", ip: "192.168.1.23"  # IP должен быть из домашнего диапазона и не конфликтовать с другими устройствами
       # Customize resources for the "node1" VM
           pa.disksize.size = '5GB'  # This option needed plugin  `vagrant plugin install vagrant-disksize`
           pa.vm.provider "virtualbox" do |avm|
