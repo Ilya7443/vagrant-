@@ -203,5 +203,43 @@ INSERT INTO reviews (user_id, product_id, rating, review_text) VALUES
   # Устанавливает права доступа на authorized_keys — только владелец может читать и писать
   chmod 600 /home/vagrant/.ssh/authorized_keys
 
-  # Устанавливает Docker (если он ещё не установлен) через APT
-  sudo apt install docker -y
+# Обновление системы
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Установка Docker и docker-compose
+sudo apt-get install -y docker.io docker-compose curl
+sudo systemctl enable --now docker
+
+# Установка Tailscale
+curl -fsSL https://tailscale.com/install.sh | sh
+sudo systemctl enable --now tailscaled
+
+# Создание папок
+mkdir -p /home/vagrant/jellyfin/config
+mkdir -p /home/vagrant/jellyfin/media
+mkdir -p /home/vagrant/qbittorrent/config
+mkdir -p /home/vagrant/qbittorrent/downloads
+
+# Docker автозапуск контейнеров при загрузке
+docker run -d \
+  --name jellyfin \
+  --restart unless-stopped \
+  -e TZ=Asia/Tashkent \
+  -v /home/vagrant/jellyfin/config:/config \
+  -v /home/vagrant/jellyfin/media:/media \
+  -p 8096:8096 \
+  jellyfin/jellyfin
+
+docker run -d \
+  --name qbittorrent \
+  --restart unless-stopped \
+  -e PUID=1000 -e PGID=1000 \
+  -e TZ=Asia/Tashkent \
+  -e WEBUI_PORT=8080 \
+  -v /home/vagrant/qbittorrent/config:/config \
+  -v /home/vagrant/jellyfin/media:/downloads \
+  -p 8080:8080 -p 6881:6881 -p 6881:6881/udp \
+  lscr.io/linuxserver/qbittorrent:latest
+
+# Команда также может показать временный логин и пароль Web-интерфейса.
+sudo docker logs qbittorrent
