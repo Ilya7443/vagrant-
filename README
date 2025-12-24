@@ -185,23 +185,22 @@ INSERT INTO reviews (user_id, product_id, rating, review_text) VALUES
  
 
  Vagrantfile были изменены, следующий конфигурации: ip, был добавлен код 
+  # Создать ключи на телефоне Termux
+  ssh-keygen -t ed25519
 
- pa.vm.provision "shell", inline: <<-SHELL
-  # Создаёт директорию .ssh в домашней папке пользователя vagrant (если её ещё нет)
-  mkdir -p /home/vagrant/.ssh
+  # После создания ключей требуется проверить на наличии ключей(после чего скопировать публичный ключ с расширение .pub)
+  ls ~/.ssh # проверка 
+  cat ~/.ssh/id_ed25519.pub # копирование публичного ключа
 
-  # Добавляет содержимое всех публичных ключей из /vagrant/*.pub в файл authorized_keys
-  # Это нужно для авторизации по SSH с использованием этих ключей
-  cat /vagrant/*.pub >> /home/vagrant/.ssh/authorized_keys
+  # Создаёт директорию .ssh в домашней папке пользователя vagrant (если её ещё нет на ПК/ноутбуке)
+  mkdir -p ~/.ssh
 
-  # Устанавливает владельца директории .ssh и всех вложенных файлов — пользователь и группа vagrant
-  chown -R vagrant:vagrant /home/vagrant/.ssh
+  # Требуется добавить публичный ключ id_ed25519.pub c телефона, в папку на ПК/ноутбук 
+  nano ~/.ssh/authorized_keys
 
-  # Устанавливает права доступа: на саму директорию — только владелец может читать, писать и заходить
-  chmod 700 /home/vagrant/.ssh
-
-  # Устанавливает права доступа на authorized_keys — только владелец может читать и писать
-  chmod 600 /home/vagrant/.ssh/authorized_keys
+  # Требуется предоставить права на ПК/ноутбуке для файла:
+  chmod 700 ~/.ssh
+  chmod 600 ~/.ssh/authorized_keys
 
 # Обновление системы
 sudo apt-get update && sudo apt-get upgrade -y
