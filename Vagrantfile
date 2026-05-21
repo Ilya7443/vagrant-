@@ -29,5 +29,42 @@ Vagrant.configure("2") do |config|
       chmod 700 /home/vagrant/.ssh
       chmod 600 /home/vagrant/.ssh/authorized_keys
     SHELL
+  end 
+  
+  # =========================
+  # REPLICA 1
+  # =========================
+  config.vm.define "node2" do |node2|
+
+    node2.vm.box = "ubuntu/jammy64"
+
+    node2.vm.hostname = "node2"
+
+    node2.vm.network "public_network", ip: "192.168.56.11"
+
+    node2.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+
   end
+
+  # =========================
+  # REPLICA 2
+  # =========================
+  config.vm.define "node3" do |node3|
+
+    node3.vm.box = "ubuntu/jammy64"
+
+    node3.vm.hostname = "node3"
+
+    node3.vm.network "public_network", ip: "192.168.56.12"
+
+    node3.vm.provider "virtualbox" do |vb|
+      vb.memory = 4096
+      vb.cpus = 2
+    end
+
+  end
+
 end
